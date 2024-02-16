@@ -13,7 +13,7 @@ const doesExist = (username)=>{
     } else {
       return false;
     }
-}
+  }
 
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
