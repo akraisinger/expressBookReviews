@@ -1,3 +1,4 @@
+const axios = require('axios').default;
 const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
@@ -31,24 +32,49 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books));
+    let asyncBooks = new Promise((resolve) => {
+        resolve(res.send(JSON.stringify(books)));
+    });
+    asyncBooks.then(
+        (data) => console.log(data)
+    )
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-    res.send(JSON.stringify(books[req.params.isbn]));
-
+    let asyncIsbn = new Promise((resolve, reject) => {
+        if(books[req.params.isbn]) {
+            resolve(res.send(JSON.stringify(books[req.params.isbn])));
+        } else {
+            reject(res.status(403).json({message: "ISBN does not exist."}));
+        }
+    });
+    asyncIsbn.then(
+        (data) => console.log(data)
+    ).catch((err) => console.log(err))
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
     const author = req.params.author.replace(/-/g,' ');
-    for (key in books) {
-        if (books[key].author == author) {
-            res.send(books[key]);
-            break;
+    let asyncAuthor = new Promise((resolve, reject) => {
+        let authorBooks = {};
+        let size = 0;
+        for (key in books) {
+            if (books[key].author == author) {
+                authorBooks[key] = books[key];
+                size++;
+            }
         }
-    }
+        if(size > 0) {
+            resolve(res.send(JSON.stringify(authorBooks)));
+        } else {
+            reject(res.status(403).json({message: "Author does not exist."}));
+        }
+    });
+    asyncAuthor.then(
+        (data) => console.log(data)
+    ).catch((err) => console.log(err))
 });
 
 // Get all books based on title
