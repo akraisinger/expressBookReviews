@@ -5,11 +5,6 @@ const regd_users = express.Router();
 
 let users = [];
 
-const isValid = (username)=>{ //returns boolean
-//write code to check is the username is valid
-    
-}
-
 const authenticatedUser = (username,password)=>{ //returns boolean
 //write code to check if username and password match the one we have in records.
     let validusers = users.filter((user)=>{
@@ -36,7 +31,7 @@ regd_users.post("/login", (req,res) => {
         req.session.authorization = {
             accessToken,username
         }
-        return res.status(200).send("User successfully logged in");
+        return res.status(200).send("Customer successfully logged in");
     } else {
         res.send(JSON.stringify(users));
       return res.status(208).json({message: "Invalid Login. Check username and password"});
@@ -51,9 +46,9 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const userExists = books[isbn].reviews[username];
     books[isbn].reviews[username] = review;
     if(userExists){
-        return res.status(200).send("User successfully updated review");
+        return res.status(200).send("Customer successfully updated review");
     } else {
-        return res.status(200).send(`User successfully created review: ${review}`);
+        return res.status(200).send(`Customer successfully created review for book with ISBN ${isbn}`);
     }
 });
 
@@ -64,14 +59,13 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     const userExists = books[isbn].reviews[username];
     if (userExists) {
         delete books[isbn].reviews[username];
-        return res.status(200).send("User successfully deleted review");
+        return res.status(200).send(`Customer successfully deleted review for book with ISBN ${isbn}`);
     }
     else {
-        return res.status(403).json({message: "User review does not exist to be deleted"})
+        return res.status(403).json({message: "Customer review does not exist to be deleted"})
     }
     
 });
 
 module.exports.authenticated = regd_users;
-module.exports.isValid = isValid;
 module.exports.users = users;
