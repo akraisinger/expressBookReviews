@@ -1,4 +1,3 @@
-const axios = require('axios').default;
 const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
@@ -80,12 +79,24 @@ public_users.get('/author/:author',function (req, res) {
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title.replace(/-/g,' ');
-    for (key in books) {
-        if (books[key].title == title) {
-            res.send(books[key]);
-            break;
+    let asyncAuthor = new Promise((resolve, reject) => {
+        let titleBooks = {};
+        let size = 0;
+        for (key in books) {
+            if (books[key].title == title) {
+                titleBooks[key] = books[key];
+                size++;
+            }
         }
-    }
+        if(size > 0) {
+            resolve(res.send(JSON.stringify(titleBooks)));
+        } else {
+            reject(res.status(403).json({message: "Title does not exist."}));
+        }
+    });
+    asyncAuthor.then(
+        (data) => console.log(data)
+    ).catch((err) => console.log(err))
 });
 
 //  Get book review
