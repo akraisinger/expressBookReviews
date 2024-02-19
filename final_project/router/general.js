@@ -101,7 +101,11 @@ public_users.get('/title/:title',function (req, res) {
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-    res.send(JSON.stringify(books[req.params.isbn].reviews));
+    if (books[req.params.isbn]){
+        res.send(JSON.stringify(books[req.params.isbn].reviews));
+    } else {
+        res.status(403).json({message: "ISBN does not exist."});
+    }
 });
 
 module.exports.general = public_users;
