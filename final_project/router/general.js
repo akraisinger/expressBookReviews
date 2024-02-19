@@ -32,7 +32,7 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
     let asyncBooks = new Promise((resolve) => {
-        resolve(res.send(JSON.stringify(books)));
+        resolve(res.send(books));
     });
     asyncBooks.then(
         (data) => console.log(data)
@@ -43,7 +43,7 @@ public_users.get('/',function (req, res) {
 public_users.get('/isbn/:isbn',function (req, res) {
     let asyncIsbn = new Promise((resolve, reject) => {
         if(books[req.params.isbn]) {
-            resolve(res.send(JSON.stringify(books[req.params.isbn])));
+            resolve(res.send(books[req.params.isbn]));
         } else {
             reject(res.status(403).json({message: "ISBN does not exist."}));
         }
@@ -66,7 +66,7 @@ public_users.get('/author/:author',function (req, res) {
             }
         }
         if(size > 0) {
-            resolve(res.send(JSON.stringify(authorBooks)));
+            resolve(res.send(authorBooks));
         } else {
             reject(res.status(403).json({message: "Author does not exist."}));
         }
@@ -89,7 +89,7 @@ public_users.get('/title/:title',function (req, res) {
             }
         }
         if(size > 0) {
-            resolve(res.send(JSON.stringify(titleBooks)));
+            resolve(res.send(titleBooks));
         } else {
             reject(res.status(403).json({message: "Title does not exist."}));
         }
